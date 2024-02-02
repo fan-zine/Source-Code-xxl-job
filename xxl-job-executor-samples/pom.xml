@@ -13,6 +13,7 @@
     <modules>
         <module>xxl-job-executor-sample-frameless</module>
         <module>xxl-job-executor-sample-springboot</module>
+        <module>custom-service</module>
     </modules>
 
 </project>
