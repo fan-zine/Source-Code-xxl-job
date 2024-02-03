@@ -348,9 +348,11 @@ public class XxlJobServiceImpl implements XxlJobService {
 	@Override
 	public Map<String, Object> dashboardInfo() {
 
+		// 任务数量
 		int jobInfoCount = xxlJobInfoDao.findAllCount();
 		int jobLogCount = 0;
 		int jobLogSuccessCount = 0;
+		// 调度次数
 		XxlJobLogReport xxlJobLogReport = xxlJobLogReportDao.queryLogReportTotal();
 		if (xxlJobLogReport != null) {
 			jobLogCount = xxlJobLogReport.getRunningCount() + xxlJobLogReport.getSucCount() + xxlJobLogReport.getFailCount();
@@ -359,6 +361,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 		// executor count
 		Set<String> executorAddressSet = new HashSet<String>();
+		// 执行器数量
 		List<XxlJobGroup> groupList = xxlJobGroupDao.findAll();
 
 		if (groupList!=null && !groupList.isEmpty()) {
@@ -383,10 +386,12 @@ public class XxlJobServiceImpl implements XxlJobService {
 	public ReturnT<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
 
 		// process
+		// 这个统计用于折线图
 		List<String> triggerDayList = new ArrayList<String>();
 		List<Integer> triggerDayCountRunningList = new ArrayList<Integer>();
 		List<Integer> triggerDayCountSucList = new ArrayList<Integer>();
 		List<Integer> triggerDayCountFailList = new ArrayList<Integer>();
+		// 这个统计用于饼图
 		int triggerCountRunningTotal = 0;
 		int triggerCountSucTotal = 0;
 		int triggerCountFailTotal = 0;

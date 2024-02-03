@@ -45,6 +45,15 @@ public class UserController {
         return "user/user.index";
     }
 
+    /**
+     * 可用自己系统的鉴权代替
+     *
+     * @param start
+     * @param length
+     * @param username
+     * @param role
+     * @return
+     */
     @RequestMapping("/pageList")
     @ResponseBody
     @PermissionLimit(adminuser = true)
@@ -71,6 +80,12 @@ public class UserController {
         return maps;
     }
 
+    /**
+     * 可用自己系统的鉴权代替
+     *
+     * @param xxlJobUser
+     * @return
+     */
     @RequestMapping("/add")
     @ResponseBody
     @PermissionLimit(adminuser = true)
@@ -106,6 +121,13 @@ public class UserController {
         return ReturnT.SUCCESS;
     }
 
+    /**
+     * 可用自己系统的鉴权代替
+     *
+     * @param request
+     * @param xxlJobUser
+     * @return
+     */
     @RequestMapping("/update")
     @ResponseBody
     @PermissionLimit(adminuser = true)
@@ -134,6 +156,13 @@ public class UserController {
         return ReturnT.SUCCESS;
     }
 
+    /**
+     * 可用自己系统的鉴权代替
+     *
+     * @param request
+     * @param id
+     * @return
+     */
     @RequestMapping("/remove")
     @ResponseBody
     @PermissionLimit(adminuser = true)
@@ -149,6 +178,13 @@ public class UserController {
         return ReturnT.SUCCESS;
     }
 
+    /**
+     * 可用自己系统的鉴权代替
+     *
+     * @param request
+     * @param password
+     * @return
+     */
     @RequestMapping("/updatePwd")
     @ResponseBody
     public ReturnT<String> updatePwd(HttpServletRequest request, String password){

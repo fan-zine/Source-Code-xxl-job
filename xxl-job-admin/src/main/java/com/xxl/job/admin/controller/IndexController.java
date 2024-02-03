@@ -34,7 +34,13 @@ public class IndexController {
 	@Resource
 	private LoginService loginService;
 
-
+	/**
+	 * 用于首页-运行报表中job数、调度次数、执行器数统计
+	 *
+	 * @param model
+	 * @return
+	 *
+	 */
 	@RequestMapping("/")
 	public String index(Model model) {
 
@@ -44,13 +50,28 @@ public class IndexController {
 		return "index";
 	}
 
+	/**
+	 * 用于首页-运行报表-调度报表中获取执行汇总数据，默认查询最近一周
+	 *
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
     @RequestMapping("/chartInfo")
 	@ResponseBody
 	public ReturnT<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
         ReturnT<Map<String, Object>> chartInfo = xxlJobService.chartInfo(startDate, endDate);
         return chartInfo;
     }
-	
+
+	/**
+	 * 可用自己系统的鉴权代替
+	 *
+	 * @param request
+	 * @param response
+	 * @param modelAndView
+	 * @return
+	 */
 	@RequestMapping("/toLogin")
 	@PermissionLimit(limit=false)
 	public ModelAndView toLogin(HttpServletRequest request, HttpServletResponse response,ModelAndView modelAndView) {
@@ -60,7 +81,17 @@ public class IndexController {
 		}
 		return new ModelAndView("login");
 	}
-	
+
+	/**
+	 * 可用自己系统的鉴权代替
+	 *
+	 * @param request
+	 * @param response
+	 * @param userName
+	 * @param password
+	 * @param ifRemember
+	 * @return
+	 */
 	@RequestMapping(value="login", method=RequestMethod.POST)
 	@ResponseBody
 	@PermissionLimit(limit=false)
@@ -68,7 +99,14 @@ public class IndexController {
 		boolean ifRem = (ifRemember!=null && ifRemember.trim().length()>0 && "on".equals(ifRemember))?true:false;
 		return loginService.login(request, response, userName, password, ifRem);
 	}
-	
+
+	/**
+	 * 可用自己系统的鉴权代替
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value="logout", method=RequestMethod.POST)
 	@ResponseBody
 	@PermissionLimit(limit=false)
