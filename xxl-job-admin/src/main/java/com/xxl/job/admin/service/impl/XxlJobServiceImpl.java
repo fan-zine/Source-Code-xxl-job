@@ -237,6 +237,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		// group valid
+		// 查询该id对应的执行器是否存在
 		XxlJobGroup jobGroup = xxlJobGroupDao.load(jobInfo.getJobGroup());
 		if (jobGroup == null) {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_jobgroup")+I18nUtil.getString("system_unvalid")) );
@@ -289,13 +290,17 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 	@Override
 	public ReturnT<String> remove(int id) {
+		// 查询该任务是否存在
 		XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
 		if (xxlJobInfo == null) {
 			return ReturnT.SUCCESS;
 		}
 
+		// 删除该任务
 		xxlJobInfoDao.delete(id);
+		// 根据任务id删除执行日志
 		xxlJobLogDao.delete(id);
+		// 如果该任务是GLUE类型，则需要删除GLUE源代码
 		xxlJobLogGlueDao.deleteByJobId(id);
 		return ReturnT.SUCCESS;
 	}
@@ -323,8 +328,11 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("schedule_type")+I18nUtil.getString("system_unvalid")) );
 		}
 
+		// 调度状态：1-运行
 		xxlJobInfo.setTriggerStatus(1);
+		// 上次调度时间
 		xxlJobInfo.setTriggerLastTime(0);
+		// 下次调度时间
 		xxlJobInfo.setTriggerNextTime(nextTriggerTime);
 
 		xxlJobInfo.setUpdateTime(new Date());

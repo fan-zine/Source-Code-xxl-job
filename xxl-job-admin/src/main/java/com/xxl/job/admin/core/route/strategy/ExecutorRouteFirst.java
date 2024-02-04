@@ -13,6 +13,7 @@ public class ExecutorRouteFirst extends ExecutorRouter {
 
     @Override
     public ReturnT<String> route(TriggerParam triggerParam, List<String> addressList){
+        // 默认选择第一个机器
         return new ReturnT<String>(addressList.get(0));
     }
 

@@ -77,6 +77,7 @@ public class JobTriggerPoolHelper {
                            final String addressList) {
 
         // choose thread pool
+        // 选择线程池，如果一分钟窗口期内任务耗时500ms以上的超过10次，则使用慢池，否则使用快池，避免耗尽调度线程
         ThreadPoolExecutor triggerPool_ = fastTriggerPool;
         AtomicInteger jobTimeoutCount = jobTimeoutCountMap.get(jobId);
         if (jobTimeoutCount!=null && jobTimeoutCount.get() > 10) {      // job-timeout 10 times in 1 min
@@ -84,6 +85,7 @@ public class JobTriggerPoolHelper {
         }
 
         // trigger
+        // 使用线程池的execute方法来执行一个新任务，这个任务是一个匿名的Runnable对象，其run方法定义了触发器的执行逻辑
         triggerPool_.execute(new Runnable() {
             @Override
             public void run() {
@@ -92,12 +94,14 @@ public class JobTriggerPoolHelper {
 
                 try {
                     // do trigger
+                    // 真正触发执行
                     XxlJobTrigger.trigger(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 } finally {
 
                     // check timeout-count-map
+                    // 每分钟清空一下慢池中慢作业的计数统计，不是严格意义上的每分钟，是每执行一次的时候去判断
                     long minTim_now = System.currentTimeMillis()/60000;
                     if (minTim != minTim_now) {
                         minTim = minTim_now;
@@ -105,6 +109,7 @@ public class JobTriggerPoolHelper {
                     }
 
                     // incr timeout-count-map
+                    // 超过500ms则判定为慢作业，加入统计执行次数
                     long cost = System.currentTimeMillis()-start;
                     if (cost > 500) {       // ob-timeout threshold 500ms
                         AtomicInteger timeoutCount = jobTimeoutCountMap.putIfAbsent(jobId, new AtomicInteger(1));

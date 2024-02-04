@@ -45,7 +45,14 @@ public class JobInfoController {
 	private XxlJobGroupDao xxlJobGroupDao;
 	@Resource
 	private XxlJobService xxlJobService;
-	
+
+	/**
+	 * 任务管理界面获取字典
+	 * @param request
+	 * @param model
+	 * @param jobGroup
+	 * @return
+	 */
 	@RequestMapping
 	public String index(HttpServletRequest request, Model model, @RequestParam(required = false, defaultValue = "-1") int jobGroup) {
 
@@ -71,10 +78,18 @@ public class JobInfoController {
 		return "jobinfo/jobinfo.index";
 	}
 
+	/**
+	 * 根据角色过滤任务组列表，如果没有角色可以讲此部分删除
+	 *
+	 * @param request
+	 * @param jobGroupList_all
+	 * @return
+	 */
 	public static List<XxlJobGroup> filterJobGroupByRole(HttpServletRequest request, List<XxlJobGroup> jobGroupList_all){
 		List<XxlJobGroup> jobGroupList = new ArrayList<>();
 		if (jobGroupList_all!=null && jobGroupList_all.size()>0) {
 			XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);
+			// 厚礼蟹，大佬也会写magic code
 			if (loginUser.getRole() == 1) {
 				jobGroupList = jobGroupList_all;
 			} else {
@@ -97,7 +112,19 @@ public class JobInfoController {
 			throw new RuntimeException(I18nUtil.getString("system_permission_limit") + "[username="+ loginUser.getUsername() +"]");
 		}
 	}
-	
+
+	/**
+	 * 获取指定执行器下的任务，jobGroup是前端必传参数
+	 *
+	 * @param start
+	 * @param length
+	 * @param jobGroup
+	 * @param triggerStatus
+	 * @param jobDesc
+	 * @param executorHandler
+	 * @param author
+	 * @return
+	 */
 	@RequestMapping("/pageList")
 	@ResponseBody
 	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,  
@@ -106,37 +133,77 @@ public class JobInfoController {
 		
 		return xxlJobService.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
 	}
-	
+
+	/**
+	 * 新增任务
+	 *
+	 * @param jobInfo
+	 * @return
+	 */
 	@RequestMapping("/add")
 	@ResponseBody
 	public ReturnT<String> add(XxlJobInfo jobInfo) {
 		return xxlJobService.add(jobInfo);
 	}
-	
+
+	/**
+	 * 更新任务
+	 *
+	 * @param jobInfo
+	 * @return
+	 */
 	@RequestMapping("/update")
 	@ResponseBody
 	public ReturnT<String> update(XxlJobInfo jobInfo) {
 		return xxlJobService.update(jobInfo);
 	}
-	
+
+	/**
+	 * 删除任务
+	 *
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/remove")
 	@ResponseBody
 	public ReturnT<String> remove(int id) {
 		return xxlJobService.remove(id);
 	}
-	
+
+	/**
+	 * 停止任务
+	 * TODO: 这里只修改了状态，具体是怎么在任务中停止的，是有监听吗？
+	 *
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/stop")
 	@ResponseBody
 	public ReturnT<String> pause(int id) {
 		return xxlJobService.stop(id);
 	}
-	
+
+	/**
+	 * 启动任务
+	 * TODO: 这里只修改了状态，具体是怎么在任务中执行的，是有监听吗？
+	 *
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/start")
 	@ResponseBody
 	public ReturnT<String> start(int id) {
 		return xxlJobService.start(id);
 	}
-	
+
+	/**
+	 * 执行一次
+	 *
+	 * @param id
+	 * @param executorParam
+	 * @param addressList
+	 * @return
+	 */
 	@RequestMapping("/trigger")
 	@ResponseBody
 	//@PermissionLimit(limit = false)
