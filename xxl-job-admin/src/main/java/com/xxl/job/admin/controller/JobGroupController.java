@@ -40,6 +40,16 @@ public class JobGroupController {
 		return "jobgroup/jobgroup.index";
 	}
 
+	/**
+	 * 用于首页-执行器管理中心的分页查询
+	 *
+	 * @param request
+	 * @param start
+	 * @param length
+	 * @param appname
+	 * @param title
+	 * @return
+	 */
 	@RequestMapping("/pageList")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
@@ -49,7 +59,9 @@ public class JobGroupController {
 										String appname, String title) {
 
 		// page query
+		// 执行器的ip地址列表是","分割，从xxl_job_group表中查询出来的
 		List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
+		// 如果用分页插件，就不需要有下面这条语句了
 		int list_count = xxlJobGroupDao.pageListCount(start, length, appname, title);
 
 		// package result
@@ -60,6 +72,12 @@ public class JobGroupController {
 		return maps;
 	}
 
+	/**
+	 * 用于执行器管理-编辑执行器中新增执行器
+	 *
+	 * @param xxlJobGroup
+	 * @return
+	 */
 	@RequestMapping("/save")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
@@ -104,6 +122,12 @@ public class JobGroupController {
 		return (ret>0)?ReturnT.SUCCESS:ReturnT.FAIL;
 	}
 
+	/**
+	 * 用于执行器管理-编辑执行器中编辑执行器，即使只修改了一个参数，也会把参数全都传过来，自动注册模式下传入的addressList没有用到，是实际去注册表中查询到的
+	 *
+	 * @param xxlJobGroup
+	 * @return
+	 */
 	@RequestMapping("/update")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
@@ -120,6 +144,7 @@ public class JobGroupController {
 		}
 		if (xxlJobGroup.getAddressType() == 0) {
 			// 0=自动注册
+			// 获取指定执行器在注册表中的地址
 			List<String> registryList = findRegistryByAppName(xxlJobGroup.getAppname());
 			String addressListStr = null;
 			if (registryList!=null && !registryList.isEmpty()) {
@@ -153,6 +178,7 @@ public class JobGroupController {
 
 	private List<String> findRegistryByAppName(String appnameParam){
 		HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
+		// 获取所有已注册的执行器的记录
 		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
 		if (list != null) {
 			for (XxlJobRegistry item: list) {
@@ -173,6 +199,11 @@ public class JobGroupController {
 		return appAddressMap.get(appnameParam);
 	}
 
+	/**
+	 * 删除执行器
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/remove")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
@@ -193,6 +224,12 @@ public class JobGroupController {
 		return (ret>0)?ReturnT.SUCCESS:ReturnT.FAIL;
 	}
 
+	/**
+	 * 获取执行器详情
+	 *
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping("/loadById")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
