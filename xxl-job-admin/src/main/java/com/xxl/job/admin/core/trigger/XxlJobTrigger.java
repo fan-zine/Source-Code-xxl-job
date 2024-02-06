@@ -230,7 +230,6 @@ public class XxlJobTrigger {
     public static ReturnT<String> runExecutor(TriggerParam triggerParam, String address){
         ReturnT<String> runResult = null;
         try {
-            // TODO 20240204 Bookmark
             // 获取业务执行器地址：执行器地址后面拼接token
             ExecutorBiz executorBiz = XxlJobScheduler.getExecutorBiz(address);
             // 执行访问
