@@ -217,6 +217,13 @@ public class JobInfoController {
 		return ReturnT.SUCCESS;
 	}
 
+	/**
+	 * 查询下次执行时间，入参只需要类型"cron"和cron配置即可
+	 *
+	 * @param scheduleType
+	 * @param scheduleConf
+	 * @return
+	 */
 	@RequestMapping("/nextTriggerTime")
 	@ResponseBody
 	public ReturnT<List<String>> nextTriggerTime(String scheduleType, String scheduleConf) {
