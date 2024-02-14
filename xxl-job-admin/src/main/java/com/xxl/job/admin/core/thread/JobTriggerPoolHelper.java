@@ -24,6 +24,7 @@ public class JobTriggerPoolHelper {
     private ThreadPoolExecutor fastTriggerPool = null;
     private ThreadPoolExecutor slowTriggerPool = null;
 
+    // 启动了两个线程池
     public void start(){
         fastTriggerPool = new ThreadPoolExecutor(
                 10,

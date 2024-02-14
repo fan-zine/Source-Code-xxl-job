@@ -57,6 +57,7 @@ public class XxlJobRemotingUtil {
 
     /**
      * post
+     * 在调度中心使用，用来访问执行器提供的http接口
      *
      * @param url
      * @param accessToken

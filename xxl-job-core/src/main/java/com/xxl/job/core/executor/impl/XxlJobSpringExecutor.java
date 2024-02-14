@@ -20,6 +20,8 @@ import java.util.Map;
 
 /**
  * xxl-job executor (for spring)
+ * 客户端启动
+ * 实现SmartInitializingSingleton接口的当Spring容器初始化完成，将调用afterSingletonsInstantiated()方法
  *
  * @author xuxueli 2018-11-01 09:24:52
  */
@@ -35,6 +37,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
         /*initJobHandlerRepository(applicationContext);*/
 
         // init JobHandler Repository (for method)
+        // 初始化调度器资源管理器
         initJobHandlerMethodRepository(applicationContext);
 
         // refresh GlueFactory
