@@ -35,6 +35,7 @@ public class JobCompleteHelper {
 	public void start(){
 
 		// for callback
+		// 该线程池主要用来更新xxl_job_log记录的执行结果
 		callbackThreadPool = new ThreadPoolExecutor(
 				2,
 				20,
@@ -57,6 +58,7 @@ public class JobCompleteHelper {
 
 
 		// for monitor
+		// 该线程用来处理执行超时
 		monitorThread = new Thread(new Runnable() {
 
 			@Override

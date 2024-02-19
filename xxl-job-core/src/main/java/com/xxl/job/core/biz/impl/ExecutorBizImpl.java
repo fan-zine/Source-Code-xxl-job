@@ -43,6 +43,12 @@ public class ExecutorBizImpl implements ExecutorBiz {
         return ReturnT.SUCCESS;
     }
 
+    /**
+     * 执行器接收到调度中心的请求时，会把请求交给ExecutorBizImpl来处理
+     *
+     * @param triggerParam
+     * @return
+     */
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
         // load old：jobHandler + jobThread
@@ -128,6 +134,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         // 获取任务阻塞策略
         if (jobThread != null) {
             ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(triggerParam.getExecutorBlockStrategy(), null);
+            // 丢弃后续调度：调度请求进入单机执行器后，发现执行器存在运行的调度任务，本次请求将会被丢弃并标记为失败
             if (ExecutorBlockStrategyEnum.DISCARD_LATER == blockStrategy) {
                 // discard when running
                 if (jobThread.isRunningOrHasQueue()) {
@@ -135,9 +142,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
                 }
             } else if (ExecutorBlockStrategyEnum.COVER_EARLY == blockStrategy) {
                 // kill running jobThread
+                // 覆盖之前调度：调度请求进入单机执行器后，发现执行器存在运行的调度任务，将会终止运行中的调度任务并清空队列，然后运行本地调度任务
                 if (jobThread.isRunningOrHasQueue()) {
                     removeOldReason = "block strategy effect：" + ExecutorBlockStrategyEnum.COVER_EARLY.getTitle();
-
+                    // 释放线程引用
                     jobThread = null;
                 }
             } else {

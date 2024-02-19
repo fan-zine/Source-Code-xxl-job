@@ -54,13 +54,18 @@ public class JobApiController {
         }
 
         // services mapping
+        // 更新调度日志状态，当执行器执行成功并且存在有子任务时，触发执行子任务
         if ("callback".equals(uri)) {
             List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
             return adminBiz.callback(callbackParamList);
-        } else if ("registry".equals(uri)) {
+        }
+        // 服务注册
+        else if ("registry".equals(uri)) {
             RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
             return adminBiz.registry(registryParam);
-        } else if ("registryRemove".equals(uri)) {
+        }
+        // 服务下线
+        else if ("registryRemove".equals(uri)) {
             RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
             return adminBiz.registryRemove(registryParam);
         } else {

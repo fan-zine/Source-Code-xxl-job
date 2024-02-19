@@ -28,6 +28,7 @@ public class JobLogReportHelper {
     private Thread logrThread;
     private volatile boolean toStop = false;
     public void start(){
+        // 启动logrThread守护线程，定时扫描xxl_job_log表
         logrThread = new Thread(new Runnable() {
 
             @Override

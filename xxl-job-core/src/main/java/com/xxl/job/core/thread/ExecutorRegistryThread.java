@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xuxueli on 17/3/2.
+ * 任务执行器
  */
 public class ExecutorRegistryThread {
     private static Logger logger = LoggerFactory.getLogger(ExecutorRegistryThread.class);
@@ -43,6 +44,7 @@ public class ExecutorRegistryThread {
                 while (!toStop) {
                     try {
                         RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
+                        // 遍历所有的调度中心
                         for (AdminBiz adminBiz: XxlJobExecutor.getAdminBizList()) {
                             try {
                                 ReturnT<String> registryResult = adminBiz.registry(registryParam);
@@ -66,6 +68,7 @@ public class ExecutorRegistryThread {
                     }
 
                     try {
+                        // 休眠30s，每30s执行一次
                         if (!toStop) {
                             TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
                         }
@@ -77,6 +80,7 @@ public class ExecutorRegistryThread {
                 }
 
                 // registry remove
+                // 线程终止后，主动断开连接
                 try {
                     RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
                     for (AdminBiz adminBiz: XxlJobExecutor.getAdminBizList()) {
@@ -106,6 +110,7 @@ public class ExecutorRegistryThread {
 
             }
         });
+        // 设置为守护线程
         registryThread.setDaemon(true);
         registryThread.setName("xxl-job, executor ExecutorRegistryThread");
         registryThread.start();

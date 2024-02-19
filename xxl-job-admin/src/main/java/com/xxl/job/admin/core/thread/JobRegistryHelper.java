@@ -53,6 +53,7 @@ public class JobRegistryHelper {
 				});
 
 		// for monitor
+		// 开启一个线程，每sleep30s移除失活业务服务器记录，读取存活的xxl_job_registry信息，此线程被设置为守护线程，通过改变变量标记toStop退出执行
 		registryMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
