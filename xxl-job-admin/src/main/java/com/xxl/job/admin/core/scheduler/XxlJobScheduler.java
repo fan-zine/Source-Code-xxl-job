@@ -34,7 +34,7 @@ public class XxlJobScheduler  {
         JobRegistryHelper.getInstance().start();
 
         // admin fail-monitor run
-        // 运行事变监视器，主要失败发送邮箱，重试触发器
+        // 运行失败监视器，主要失败发送邮箱，重试触发器
         JobFailMonitorHelper.getInstance().start();
 
         // admin lose-monitor run ( depend on JobTriggerPoolHelper )
@@ -42,7 +42,7 @@ public class XxlJobScheduler  {
         JobCompleteHelper.getInstance().start();
 
         // admin log report start
-        // 统计一些失败成功报表
+        // 更新日志报表、删除过期日志
         JobLogReportHelper.getInstance().start();
 
         // start-schedule  ( depend on JobTriggerPoolHelper )

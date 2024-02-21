@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * job log
+ * 调度日志表:用于保存XXL-JOB任务调度的历史信息，入调度结果、执行结果、调度入参、调度机器和执行器等
+ *
  * @author xuxueli 2016-1-12 18:03:06
  */
 @Mapper

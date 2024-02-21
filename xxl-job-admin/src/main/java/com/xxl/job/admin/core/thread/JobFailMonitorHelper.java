@@ -38,13 +38,13 @@ public class JobFailMonitorHelper {
 				// monitor
 				while (!toStop) {
 					try {
-
+						// 查询失败的任务日志的id列表
 						List<Long> failLogIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findFailJobLogIds(1000);
 						if (failLogIds!=null && !failLogIds.isEmpty()) {
 							for (long failLogId: failLogIds) {
 
 								// lock log
-								// 通过sql的cas形式，逐条锁定失败的日志记录来处理
+								// 通过sql的cas形式，逐条锁定失败的日志记录，将其告警状态设置为-1
 								int lockRet = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateAlarmStatus(failLogId, 0, -1);
 								if (lockRet < 1) {
 									continue;
