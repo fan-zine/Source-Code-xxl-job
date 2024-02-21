@@ -29,9 +29,8 @@ public class XxlJobScheduler  {
         JobTriggerPoolHelper.toStart();
 
         // admin registry monitor run
-        // 30s执行一次，维护注册表信息，判断在线超时时间90s
-        // 删除90s未有心跳的执行器节点：jobRegistry
-        // 获取所有的注册节点，更新到jobGroup(执行器)
+        // 管理调度中心和执行器的注册信息
+        // getInstance()的代码结构通常是使用了单例模式，确保在整个应用程序中，这个类只有一个实例存在，便于全局统一管理和访问
         JobRegistryHelper.getInstance().start();
 
         // admin fail-monitor run

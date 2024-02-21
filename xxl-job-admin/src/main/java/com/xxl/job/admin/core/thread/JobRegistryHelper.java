@@ -20,6 +20,7 @@ import java.util.concurrent.*;
 public class JobRegistryHelper {
 	private static Logger logger = LoggerFactory.getLogger(JobRegistryHelper.class);
 
+	// 单例模式：通过私有静态成员instance和私有构造方法，确保JobRegistryHelper只有一个实例，通过getInstance()方法获取
 	private static JobRegistryHelper instance = new JobRegistryHelper();
 	public static JobRegistryHelper getInstance(){
 		return instance;
@@ -32,6 +33,7 @@ public class JobRegistryHelper {
 	public void start(){
 
 		// for registry or remove
+		// 该线程池用于异步执行任务的注册和注销操作
 		registryOrRemoveThreadPool = new ThreadPoolExecutor(
 				2,
 				10,
@@ -54,22 +56,26 @@ public class JobRegistryHelper {
 
 		// for monitor
 		// 开启一个线程，每sleep30s移除失活业务服务器记录，读取存活的xxl_job_registry信息，此线程被设置为守护线程，通过改变变量标记toStop退出执行
+		// 监控线程：负责定时检测和处理调度中心和执行器的注册信息
 		registryMonitorThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				// 通过循环，不断执行监控逻辑
 				while (!toStop) {
 					try {
 						// auto registry group
+						// 获取所有自动注册的执行器
 						List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().findByAddressType(0);
 						if (groupList!=null && !groupList.isEmpty()) {
-
 							// remove dead address (admin/executor)
+							// 查找所有失活的执行器并移除
 							List<Integer> ids = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().findDead(RegistryConfig.DEAD_TIMEOUT, new Date());
 							if (ids!=null && ids.size()>0) {
 								XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().removeDead(ids);
 							}
 
 							// fresh online address (admin/executor)
+							// 获取所有存活的执行器的信息，按照应用名称进行分组，构建一个Map，以应用名称作为key，执行器地址列表作为value
 							HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
 							List<XxlJobRegistry> list = XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
 							if (list != null) {
@@ -90,6 +96,7 @@ public class JobRegistryHelper {
 							}
 
 							// fresh group address
+							// 更新执行器组的执行器地址列表信息
 							for (XxlJobGroup group: groupList) {
 								List<String> registryList = appAddressMap.get(group.getAppname());
 								String addressListStr = null;
@@ -114,6 +121,7 @@ public class JobRegistryHelper {
 						}
 					}
 					try {
+						// 每30s扫描一次
 						TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
 					} catch (InterruptedException e) {
 						if (!toStop) {
@@ -124,6 +132,7 @@ public class JobRegistryHelper {
 				logger.info(">>>>>>>>>>> xxl-job, job registry monitor thread stop");
 			}
 		});
+		// 守护线程，不会阻止程序的终止
 		registryMonitorThread.setDaemon(true);
 		registryMonitorThread.setName("xxl-job, admin JobRegistryMonitorHelper-registryMonitorThread");
 		registryMonitorThread.start();
@@ -133,9 +142,11 @@ public class JobRegistryHelper {
 		toStop = true;
 
 		// stop registryOrRemoveThreadPool
+		// 停止线程池
 		registryOrRemoveThreadPool.shutdownNow();
 
 		// stop monitir (interrupt and wait)
+		// 停止监控线程
 		registryMonitorThread.interrupt();
 		try {
 			registryMonitorThread.join();

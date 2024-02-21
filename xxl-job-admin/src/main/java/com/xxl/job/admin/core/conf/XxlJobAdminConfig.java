@@ -16,6 +16,8 @@ import java.util.Arrays;
 /**
  * xxl-job config
  * InitializingBean主要用于在bean的属性被初始化后执行特定的操作，Spring在初始化该bean的属性后，会自动调用该类的afterPropertiesSet()方法
+ * 1.根据@Component注解，Spring容器会扫描并实例化XxlJobAdminConfig这个类，将其纳入容器的管理
+ * 2.实例化完成后，Spring容器会检测到XxlJobAdminConfig实现了InitializingBean接口，并调用其afterPropertiesSet方法
  *
  * @author xuxueli 2017-04-28
  */
